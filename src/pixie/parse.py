@@ -5,6 +5,7 @@ import re
 from parsec import (
     generate,
     letter,
+    many,
     many1,
     none_of,
     optional,
@@ -16,6 +17,13 @@ from parsec import (
 
 from typing import Any, Callable
 
+from pixie.ast import (
+    PSXAttributeInitializerNode,
+    PSXAttributeNode,
+    PSXBlockElementNode,
+    PSXIdentiferNameNode,
+)
+
 
 whitespace = regex(r"\s*", re.MULTILINE)
 lexeme: Callable[[Parser[Any]], Parser[Any]] = lambda p: p << whitespace
@@ -25,12 +33,12 @@ lclosedBracket: Parser[str] = lexeme(string("</"))
 rbracket: Parser[str] = lexeme(string(">"))
 rclosedBracket: Parser[str] = lexeme(string("/>"))
 
-JSXIdentifier: Parser[str] = many1(letter()).parsecmap(lambda lst: "".join(lst))
-JSXAttributeName: Parser[str] = JSXIdentifier
+PSXIdentifier: Parser[str] = many1(letter()).parsecmap(lambda lst: "".join(lst))
+PSXAttributeName: Parser[str] = PSXIdentifier
 
 
 @generate
-def JSXDoubleStringCharacters() -> Generator[Parser[str], str, str]:
+def PSXDoubleStringCharacters() -> Generator[Parser[str], str, str]:
     yield string('"')
     strchars = yield (many1(none_of('"'))).parsecmap(lambda lst: "".join(lst))
     yield string('"')
@@ -38,48 +46,60 @@ def JSXDoubleStringCharacters() -> Generator[Parser[str], str, str]:
 
 
 @generate
-def JSXSingleStringCharacters() -> Generator[Parser[str], str, str]:
+def PSXSingleStringCharacters() -> Generator[Parser[str], str, str]:
     yield string("'")
     strchars = yield many1(none_of("'")).parsecmap(lambda lst: "".join(lst))
     yield string("'")
     return strchars
 
 
-JSXStringCharacters = JSXDoubleStringCharacters | JSXSingleStringCharacters
-JSXAttributeValue = JSXStringCharacters
-JSXAttributeInitializer: Parser[str] = string("=") >> JSXAttributeValue
+PSXStringCharacters = PSXDoubleStringCharacters | PSXSingleStringCharacters
+PSXAttributeValue = PSXStringCharacters
+
+
+@generate  # type: ignore[misc]
+def PSXAttributeInitializer() -> Generator[Parser[str] | Parser[list[str]], Any, Any]:
+    yield string("=")
+    yield many(whitespace)
+    attrValue = yield PSXAttributeValue
+    return attrValue
+
+
+@generate  # type: ignore[misc]
+def PSXAttribute() -> (
+    Generator[Parser[str] | Parser[str | None], Any, PSXAttributeNode]
+):
+    attrName = yield PSXAttributeName
+    attrValue = yield optional(PSXAttributeInitializer)
+    return PSXAttributeNode(
+        PSXIdentiferNameNode(attrName),
+        PSXAttributeInitializerNode(attrValue) if attrValue else None,
+    )
 
 
 @generate
-def JSXAttribute():
-    attrName = yield JSXAttributeName
-    attrValues = yield optional(JSXAttributeInitializer)
-    return (attrName, attrValues)
-
-
-@generate
-def JSXBlockElement():
+def PSXBlockElement():
     yield lbracket
-    identifier = yield JSXIdentifier
+    identifier = yield PSXIdentifier
     yield many1(whitespace)
-    attributes = yield optional(sepBy1(JSXAttribute, whitespace))
+    attributes = yield optional(sepBy1(PSXAttribute, whitespace), [])
     yield rbracket
     body = yield many1(optional(JSXElement))
     yield lclosedBracket
     yield string(identifier)
     yield rbracket
-    return (identifier, body, attributes)
+    return PSXBlockElementNode(PSXIdentiferNameNode(identifier), attributes, body)
 
 
 @generate
-def JSXSelfClosingElement():
+def PSXSelfClosingElement():
     yield lbracket
-    identifier = yield JSXIdentifier
+    identifier = yield PSXIdentifier
     yield many1(whitespace)
-    attributes = yield optional(sepBy1(JSXAttribute, whitespace))
+    attributes = yield optional(sepBy1(PSXAttribute, whitespace), [])
     yield many1(whitespace)
     yield rclosedBracket
     return (identifier, attributes)
 
 
-JSXElement = JSXBlockElement | JSXSelfClosingElement
+JSXElement = PSXBlockElement | PSXSelfClosingElement
