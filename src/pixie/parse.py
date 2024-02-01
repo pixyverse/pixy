@@ -1,39 +1,53 @@
+from __future__ import annotations
+from collections.abc import Generator
 import re
 
-from parsec import generate, letter, many1, none_of, optional, regex, sepBy1, string
+from parsec import (
+    generate,
+    letter,
+    many1,
+    none_of,
+    optional,
+    regex,
+    sepBy1,
+    string,
+    Parser,
+)
+
+from typing import Any, Callable
 
 
 whitespace = regex(r"\s*", re.MULTILINE)
-lexeme = lambda p: p << whitespace
+lexeme: Callable[[Parser[Any]], Parser[Any]] = lambda p: p << whitespace
 
-lbracket = lexeme(string("<"))
-lclosedBracket = lexeme(string("</"))
-rbracket = lexeme(string(">"))
-rclosedBracket = lexeme(string("/>"))
+lbracket: Parser[str] = lexeme(string("<"))
+lclosedBracket: Parser[str] = lexeme(string("</"))
+rbracket: Parser[str] = lexeme(string(">"))
+rclosedBracket: Parser[str] = lexeme(string("/>"))
 
-JSXIdentifier = many1(letter()).parsecmap(lambda lst: "".join(lst))
-JSXAttributeName = JSXIdentifier
-
-
-@generate
-def JSXDoubleStringCharacters():
-    yield string('"')
-    strchars = yield many1(none_of('"'))
-    yield string('"')
-    return "".join(strchars)
+JSXIdentifier: Parser[str] = many1(letter()).parsecmap(lambda lst: "".join(lst))
+JSXAttributeName: Parser[str] = JSXIdentifier
 
 
 @generate
-def JSXSingleStringCharacters():
+def JSXDoubleStringCharacters() -> Generator[Parser[str], str, str]:
+    yield string('"')
+    strchars = yield (many1(none_of('"'))).parsecmap(lambda lst: "".join(lst))
+    yield string('"')
+    return strchars
+
+
+@generate
+def JSXSingleStringCharacters() -> Generator[Parser[str], str, str]:
     yield string("'")
-    strchars = yield many1(none_of("'"))
+    strchars = yield many1(none_of("'")).parsecmap(lambda lst: "".join(lst))
     yield string("'")
-    return "".join(strchars)
+    return strchars
 
 
 JSXStringCharacters = JSXDoubleStringCharacters | JSXSingleStringCharacters
 JSXAttributeValue = JSXStringCharacters
-JSXAttributeInitializer = string("=") >> JSXAttributeValue
+JSXAttributeInitializer: Parser[str] = string("=") >> JSXAttributeValue
 
 
 @generate
