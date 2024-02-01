@@ -91,6 +91,14 @@ class TextPixieDoc(unittest.TestCase):
             JSXElement.parse(jsx_children), ("component", [("nested", [], None)], None)
         )
 
+        jsx_childrenAndAttributes = (
+            "<component disabled><nested width='300'></nested></component>"
+        )
+        self.assertEqual(
+            JSXElement.parse(jsx_childrenAndAttributes),
+            ("component", [("nested", [], [("width", "300")])], [("disabled", None)]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
