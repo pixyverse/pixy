@@ -9,8 +9,13 @@ class PSXIdentiferNameNode:
 
 
 @dataclass
+class PSXExpressionNode:
+    expr: str
+
+
+@dataclass
 class PSXAttributeInitializerNode:
-    value: str
+    value: str | PSXExpressionNode
 
 
 @dataclass

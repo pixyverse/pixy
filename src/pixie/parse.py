@@ -21,6 +21,7 @@ from pixie.ast import (
     PSXAttributeInitializerNode,
     PSXAttributeNode,
     PSXBlockElementNode,
+    PSXExpressionNode,
     PSXIdentiferNameNode,
 )
 
@@ -53,8 +54,18 @@ def PSXSingleStringCharacters() -> Generator[Parser[str], str, str]:
     return strchars
 
 
+@generate
+def PSXExpression():
+    yield string("{")
+    expr = yield PSXStringCharacters | many(none_of("}")).parsecmap(
+        lambda lst: "".join(lst)
+    )
+    yield string("}")
+    return PSXExpressionNode(expr)
+
+
 PSXStringCharacters = PSXDoubleStringCharacters | PSXSingleStringCharacters
-PSXAttributeValue = PSXStringCharacters
+PSXAttributeValue = PSXStringCharacters | PSXExpression
 
 
 @generate  # type: ignore[misc]

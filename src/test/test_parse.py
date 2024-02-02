@@ -5,6 +5,7 @@ from pixie.ast import (
     PSXAttributeInitializerNode,
     PSXAttributeNode,
     PSXBlockElementNode,
+    PSXExpressionNode,
     PSXIdentiferNameNode,
 )
 
@@ -55,6 +56,14 @@ class TestPixie(unittest.TestCase):
             PSXAttribute.parse_strict('src="img_cat.jpg"'),
             PSXAttributeNode(
                 PSXIdentiferNameNode("src"), PSXAttributeInitializerNode("img_cat.jpg")
+            ),
+        )
+
+        self.assertEqual(
+            PSXAttribute.parse_strict("width={1+1}"),
+            PSXAttributeNode(
+                PSXIdentiferNameNode("width"),
+                PSXAttributeInitializerNode(PSXExpressionNode("1+1")),
             ),
         )
 
