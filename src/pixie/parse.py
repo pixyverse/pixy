@@ -1,5 +1,7 @@
 import re
-from parsec import *
+
+from parsec import generate, letter, many1, none_of, optional, regex, sepBy1, string
+
 
 whitespace = regex(r"\s*", re.MULTILINE)
 lexeme = lambda p: p << whitespace

@@ -1,5 +1,15 @@
 import unittest
-from pixie.parse import *
+
+from parsec import ParseError
+
+from pixie.parse import (
+    JSXAttribute,
+    JSXAttributeInitializer,
+    JSXElement,
+    JSXIdentifier,
+    JSXSelfClosingElement,
+    JSXStringCharacters,
+)
 
 
 class TestPixie(unittest.TestCase):

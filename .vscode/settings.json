@@ -9,5 +9,6 @@
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
     "black-formatter.importStrategy": "fromEnvironment",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
 }
