@@ -66,6 +66,24 @@ class TestTranspile(unittest.TestCase):
         tree = transpile(node)
         self.assertEqual(tree(), "<component width='2'/>")
 
+    def test_transpileAttributeExpressionsWithVars(self) -> None:
+        attribute: PSXAttributeNode = PSXAttributeNode(
+            PSXIdentiferNameNode("width"),
+            PSXAttributeInitializerNode(PSXExpressionNode("1+a")),
+        )
+        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
+        tree = transpile(node)
+        self.assertEqual(tree({"a": 1}), "<component width='2'/>")
+
+    def test_transpileAttributeExpressionsWithFormattedString(self) -> None:
+        attribute: PSXAttributeNode = PSXAttributeNode(
+            PSXIdentiferNameNode("display"),
+            PSXAttributeInitializerNode(PSXExpressionNode("f'1+a={1+a}'")),
+        )
+        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
+        tree = transpile(node)
+        self.assertEqual(tree({"a": 1}), "<component display='1+a=2'/>")
+
 
 if __name__ == "__main__":
     unittest.main()
