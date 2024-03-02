@@ -1,88 +1,109 @@
 import unittest
 
-from pixie.ast import (
-    PSXAttributeInitializerNode,
-    PSXAttributeNode,
-    PSXBlockElementNode,
-    PSXExpressionNode,
-    PSXIdentiferNameNode,
-    PSXSelfClosingElementNode,
-)
-from pixie.transpile import transpile
+from pixie.transpile import transpile_source
 
 
-class TestTranspile(unittest.TestCase):
-    def test_transpileSelf(self) -> None:
-        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component/>")
+class TestTranspileSource(unittest.TestCase):
+    def test_transpileEmpty(self) -> None:
+        input = ""
+        expected = ""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
+
+    def test_transpilePlainPy(self) -> None:
+        input = """a = 1
+print(a)
+"""
+        expected = input
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
+
+    def test_transpileInvalidPy(self) -> None:
+        input = """
+a =
+print(a)"""
+        self.assertRaises(SyntaxError, transpile_source, input)
+
+    def test_transpileSelfClosingComponent(self) -> None:
+        input = """
+from runtime import createElement
+a = <Hello/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Hello', [])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
     def test_transpileSelfWithAttributes(self) -> None:
-        attribute: PSXAttributeNode = PSXAttributeNode(PSXIdentiferNameNode("disabled"))
-        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component disabled/>")
-
-    def test_transpileBlockElement(self) -> None:
-        node = PSXBlockElementNode(PSXIdentiferNameNode("component"), [], [])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component></component>")
-
-    def test_transpileBlockElementWithAttributes(self) -> None:
-        node = PSXBlockElementNode(PSXIdentiferNameNode("component"), [], [])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component></component>")
+        input = """
+from runtime import createElement
+a = <Hello who={'Bertie Wooster'} salutation={'Sir'}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Hello', [('who', "'Bertie Wooster'"), ('salutation',
+    "'Sir'")])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
     def test_transpileNestedBlockElements(self) -> None:
-        childNode = PSXBlockElementNode(PSXIdentiferNameNode("nested"), [], [])
-        node = PSXBlockElementNode(PSXIdentiferNameNode("component"), [], [childNode])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component><nested></nested></component>")
+        input = """
+from runtime import createElement
+a = <Terminal><StatusBar></StatusBar></Terminal>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Terminal', [], [createElement('StatusBar', [], [])])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
     def test_transpileNestedBlockElementsWithAttributes(self) -> None:
-        attribute1: PSXAttributeNode = PSXAttributeNode(
-            PSXIdentiferNameNode("disabled")
-        )
-        attribute2: PSXAttributeNode = PSXAttributeNode(
-            PSXIdentiferNameNode("width"), PSXAttributeInitializerNode("300")
-        )
-        childNode = PSXBlockElementNode(
-            PSXIdentiferNameNode("nested"), [attribute1], []
-        )
-        node = PSXBlockElementNode(
-            PSXIdentiferNameNode("component"), [attribute2], [childNode]
-        )
-        tree = transpile(node)
-        self.assertEqual(
-            tree(), "<component width='300'><nested disabled></nested></component>"
-        )
-
-    def test_transpileAttributeExpressions(self) -> None:
-        attribute: PSXAttributeNode = PSXAttributeNode(
-            PSXIdentiferNameNode("width"),
-            PSXAttributeInitializerNode(PSXExpressionNode("1+1")),
-        )
-        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
-        tree = transpile(node)
-        self.assertEqual(tree(), "<component width='2'/>")
+        input = """
+from runtime import createElement
+a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Terminal', [('width', 100)], [createElement('StatusBar',
+    [('status', "'IDLE'")], [])])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
     def test_transpileAttributeExpressionsWithVars(self) -> None:
-        attribute: PSXAttributeNode = PSXAttributeNode(
-            PSXIdentiferNameNode("width"),
-            PSXAttributeInitializerNode(PSXExpressionNode("1+a")),
-        )
-        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
-        tree = transpile(node)
-        self.assertEqual(tree({"a": 1}), "<component width='2'/>")
+        input = """
+from runtime import createElement
+a = <Display dimensions={100+200}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Display', [('dimensions', 100 + 200)])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
     def test_transpileAttributeExpressionsWithFormattedString(self) -> None:
-        attribute: PSXAttributeNode = PSXAttributeNode(
-            PSXIdentiferNameNode("display"),
-            PSXAttributeInitializerNode(PSXExpressionNode("f'1+a={1+a}'")),
-        )
-        node = PSXSelfClosingElementNode(PSXIdentiferNameNode("component"), [attribute])
-        tree = transpile(node)
-        self.assertEqual(tree({"a": 1}), "<component display='1+a=2'/>")
+        input = """
+from runtime import createElement
+a = <Greeter greeting={f'Have a lovely day {salutation} {person}'}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Greeter', [('greeting',
+    "f'Have a lovely day {salutation} {person}'")])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
 
 
 if __name__ == "__main__":
