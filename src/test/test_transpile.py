@@ -105,6 +105,34 @@ print(a)
         transpiled = transpile_source(input)
         self.assertEquals(expected, transpiled)
 
+    def test_transpileComponentPassedAsProp(self) -> None:
+        input = """
+from runtime import createElement
+a = <Hello greet={<World/>}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Hello', [('greet', createElement('World', []))])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
+
+    def test_transpileDeclaredComponentPassedAsProp(self) -> None:
+        input = """
+from runtime import createElement
+w = <World/>
+a = <Hello greet={w}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+w = createElement('World', [])
+a = createElement('Hello', [('greet', w)])
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
+
 
 if __name__ == "__main__":
     unittest.main()

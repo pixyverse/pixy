@@ -99,6 +99,17 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
+    def test_passComponentAsProp(self):
+        input = """
+w=<World/>
+c=<Hello greet={w}>
+</Hello>
+"""
+        try:
+            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+        except SyntaxError:
+            self.fail("No exception expected")
+
     def test_invalidPixieComponentsFail(self):
         testcases = [
             ("broken_selfclose", "<Victory claps={10}>"),
