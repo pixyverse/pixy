@@ -559,6 +559,11 @@ class Parser(Parser):
         next_token = self._tokenizer.peek()
         raise self._build_syntax_error(message, next_token.start, next_token.end)
 
+primitives = (bool, str, int, float, type(None))
+
+def is_primitive(obj):
+    return type(obj) in primitives
+
 '''
 
 
@@ -671,7 +676,7 @@ selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
     func=ast.Name(id='createElement', ctx=Load, LOCATIONS),
     args=[
             ast.Constant(value=name.string, LOCATIONS),
-            ast.List(elts=attrs, ctx=Load, LOCATIONS)
+            ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
         ],
     keywords=[],
     LOCATIONS,
@@ -680,7 +685,7 @@ blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* children=[pixie_expr
     func=ast.Name(id='createElement', ctx=Load, LOCATIONS),
     args=[
             ast.Constant(value=open.string, LOCATIONS),
-            ast.List(elts=attrs, ctx=Load, LOCATIONS),
+            ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
             ast.List(elts=[children] if children else [], ctx=Load, LOCATIONS)
         ],
     keywords=[],
@@ -688,7 +693,7 @@ blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* children=[pixie_expr
     )  if open.string == close.string else None}
 blockbody: comps=[NEWLINE* statement] | [NEWLINE* pixiecomponent]  {comps}
 blockexpr: '{'e=[statements]'}' {e}
-pixieattrs: a=NAME attrval=(attrval | exprattr)? {ast.Tuple([ast.Constant(a.string, LOCATIONS), ast.Constant(attrval.string, LOCATIONS) if (attrval and hasattr(attrval,'string')) else (attrval)], ctx=Load, LOCATIONS)}
+pixieattrs: a=NAME attribval=(attrval | exprattr)? {(a.string, attribval.string if (attribval and hasattr(attribval,'string')) else attribval)}
 attrval: '=''{'(E=STRING)'}' {E}
 exprattr: '=''{'(E=expression)'}' {E}
 

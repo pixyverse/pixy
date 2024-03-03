@@ -31,7 +31,7 @@ a = <Hello/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', [])
+a = createElement('Hello', {})
 print(a)
 """
         transpiled = transpile_source(input)
@@ -44,8 +44,25 @@ a = <Hello who={'Bertie Wooster'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', [('who', "'Bertie Wooster'"), ('salutation',
-    "'Sir'")])
+a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Sir'"})
+print(a)
+"""
+        transpiled = transpile_source(input)
+        self.assertEquals(expected, transpiled)
+
+    def test_transpileSelfWithAttributesDuplicateOverride(self) -> None:
+        """
+        Since attributes are now passed as a dictionary the last attribute definition
+        will win just as normal as a python dict.
+        """
+        input = """
+from runtime import createElement
+a = <Hello who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Mr'",
+    'salutation': "'Sir'"})
 print(a)
 """
         transpiled = transpile_source(input)
@@ -58,7 +75,7 @@ a = <Terminal><StatusBar></StatusBar></Terminal>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Terminal', [], [createElement('StatusBar', [], [])])
+a = createElement('Terminal', {}, [createElement('StatusBar', {}, [])])
 print(a)
 """
         transpiled = transpile_source(input)
@@ -71,8 +88,8 @@ a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Terminal', [('width', 100)], [createElement('StatusBar',
-    [('status', "'IDLE'")], [])])
+a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {
+    'status': "'IDLE'"}, [])])
 print(a)
 """
         transpiled = transpile_source(input)
@@ -85,7 +102,7 @@ a = <Display dimensions={100+200}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Display', [('dimensions', 100 + 200)])
+a = createElement('Display', {'dimensions': 100 + 200})
 print(a)
 """
         transpiled = transpile_source(input)
@@ -98,8 +115,8 @@ a = <Greeter greeting={f'Have a lovely day {salutation} {person}'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Greeter', [('greeting',
-    "f'Have a lovely day {salutation} {person}'")])
+a = createElement('Greeter', {'greeting':
+    "f'Have a lovely day {salutation} {person}'"})
 print(a)
 """
         transpiled = transpile_source(input)
@@ -112,7 +129,7 @@ a = <Hello greet={<World/>}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', [('greet', createElement('World', []))])
+a = createElement('Hello', {'greet': createElement('World', {})})
 print(a)
 """
         transpiled = transpile_source(input)
@@ -126,8 +143,8 @@ a = <Hello greet={w}/>
 print(a)
 """
         expected = """from runtime import createElement
-w = createElement('World', [])
-a = createElement('Hello', [('greet', w)])
+w = createElement('World', {})
+a = createElement('Hello', {'greet': w})
 print(a)
 """
         transpiled = transpile_source(input)
