@@ -1,194 +1,171 @@
+import importlib.util
+from importlib.machinery import SourceFileLoader
+import sys
+import string
+import secrets
+import os
+from types import ModuleType
 import unittest
+import tempfile
 
-from parsec import ParseError
-from pixie.ast import (
-    PSXAttributeInitializerNode,
-    PSXAttributeNode,
-    PSXBlockElementNode,
-    PSXExpressionNode,
-    PSXIdentiferNameNode,
-)
-
-from pixie.parse import (
-    PSXAttribute,
-    PSXAttributeInitializer,
-    JSXElement,
-    PSXIdentifier,
-    PSXSelfClosingElement,
-    PSXStringCharacters,
-)
+from pixie.genparser import generatePixieParser
 
 
-class TestPixie(unittest.TestCase):
-    def test_jsxIdentifier(self):
-        self.assertEqual(PSXIdentifier.parse("abc"), "abc")
-        self.assertRaises(ParseError, PSXIdentifier.parse_strict, "ab<")
+def gensym(length=32, prefix="gensym_"):
+    """
+    generates a fairly unique symbol, used to make a module name,
+    used as a helper function for load_module
 
-    def test_jsxSelfClosingElement(self):
-        self.assertEqual(PSXSelfClosingElement.parse("<hello/>"), ("hello", []))
-        self.assertRaises(
-            ParseError, PSXSelfClosingElement.parse, ["<hello", "<hello/>"]
-        )
+    :return: generated symbol
+    """
+    alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    symbol = "".join([secrets.choice(alphabet) for i in range(length)])
 
-    def test_jsxStringCharacter(self):
-        self.assertEqual(PSXStringCharacters.parse_strict('"a"'), "a")
-        self.assertEqual(PSXStringCharacters.parse_strict('"abc"'), "abc")
-        self.assertRaises(ParseError, PSXStringCharacters.parse_strict, '"AB"CDEF"')
+    return prefix + symbol
 
-    def test_jsxAttributeValue(self):
-        self.assertEqual(
-            PSXAttributeInitializer.parse_strict('="img_cat.jpg"'), "img_cat.jpg"
-        )
-        self.assertRaises(ParseError, PSXAttributeInitializer.parse_strict, "src=")
 
-    def test_jsx_Attribute(self):
-        self.assertEqual(
-            PSXAttribute.parse_strict("disabled"),
-            PSXAttributeNode(PSXIdentiferNameNode("disabled"), None),
-        )
-        self.assertEqual(
-            PSXAttribute.parse_strict("src='img_cat.jpg'"),
-            PSXAttributeNode(
-                PSXIdentiferNameNode("src"), PSXAttributeInitializerNode("img_cat.jpg")
+def load_module(source, module_name=None):
+    """
+    reads file source and loads it as a module
+
+    :param source: file to load
+    :param module_name: name of module to register in sys.modules
+    :return: loaded module
+    """
+
+    if module_name is None:
+        module_name = gensym()
+
+    loader = SourceFileLoader(module_name, source)
+    spec = importlib.util.spec_from_file_location(module_name, loader=loader)
+    if spec is not None:
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        if spec.loader is not None:
+            spec.loader.exec_module(module)
+        return module
+    return None
+
+
+class TestPixieGrammar(unittest.TestCase):
+    tempFile: tempfile._TemporaryFileWrapper
+    parserModule: ModuleType | None
+
+    @classmethod
+    def setUpClass(cls):
+        script_dir = os.path.dirname(__file__)
+        grammar_file_path = "../pixie/grammar/pypixie.gram"
+        grammar_file = os.path.join(script_dir, grammar_file_path)
+        parsy = generatePixieParser(grammar_file)
+        parsy.seek(0)
+        with tempfile.NamedTemporaryFile(delete=False) as fp:
+            while bite := parsy.read():
+                fp.write(bytes(bite, encoding="utf-8"))
+                fp.close()
+        TestPixieGrammar.tempFile = fp
+        TestPixieGrammar.parserModule = load_module(fp.name)
+
+    @classmethod
+    def tearDownClass(cls):
+        TestPixieGrammar.tempFile.close()
+        TestPixieGrammar.parserModule = None
+
+    def test_simplePyIsValidPixie(self):
+        testcases = [
+            ("single_line", "a = 1;print(a)"),
+            (
+                "proper_indent",
+                """
+a += 1
+print(a)
+""",
             ),
-        )
-        self.assertEqual(
-            PSXAttribute.parse_strict('src="img_cat.jpg"'),
-            PSXAttributeNode(
-                PSXIdentiferNameNode("src"), PSXAttributeInitializerNode("img_cat.jpg")
+            ("empty_is_ok", ""),
+        ]
+        for testcase in testcases:
+            with self.subTest(msg=testcase[0]):
+                try:
+                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                except SyntaxError:
+                    self.fail("No exception expected")
+
+    def test_invalidPyReportsBroken(self):
+        assert TestPixieGrammar.parserModule is not None
+        testcases = [
+            ("single_line", "a = 1print(a)"),
+            (
+                "proper_indent",
+                """
+a += 1
+    print(a)
+""",
             ),
-        )
+            ("unfinished_business", "-"),
+        ]
+        for testcase in testcases:
+            with self.subTest(msg=testcase[0]):
+                self.assertRaises(
+                    SyntaxError,
+                    TestPixieGrammar.parserModule.parse_string,
+                    testcase[1],
+                    mode="exec",
+                )
 
-        self.assertEqual(
-            PSXAttribute.parse_strict("width={1+1}"),
-            PSXAttributeNode(
-                PSXIdentiferNameNode("width"),
-                PSXAttributeInitializerNode(PSXExpressionNode("1+1")),
+    def test_psxAssignment(self):
+        assert TestPixieGrammar.parserModule is not None
+        testcases = [
+            ("assign_closed_element", "a=<Hello/>"),
+            ("assign_block_element", "a=<Hello></Hello>"),
+        ]
+        for testcase in testcases:
+            with self.subTest(msg=testcase[0]):
+                try:
+                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                except SyntaxError:
+                    self.fail("No exception expected")
+
+    def test_ComponentAttributes(self):
+        assert TestPixieGrammar.parserModule is not None
+        testcases = [
+            ("attribute_val", "<Victory claps={10}/>"),
+            ("void_attribute", "<Button disabled/>"),
+            (
+                "block_attribute",
+                "<Layout grid={(10,10)}><Nested palette={'RGB'}/></Layout>",
             ),
-        )
+            ("attribute_expression", "<Grid Width={200+300}></Grid>"),
+        ]
+        for testcase in testcases:
+            with self.subTest(msg=testcase[0]):
+                try:
+                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                except SyntaxError:
+                    self.fail("No exception expected")
 
-    def test_jsx_selfClosingElement(self):
-        self.assertEqual(PSXSelfClosingElement.parse("<component/>"), ("component", []))
+    def test_nestedComponents(self):
+        input = """
+c=<Hello>
+<World/>
+</Hello>
+"""
+        try:
+            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+        except SyntaxError:
+            self.fail("No exception expected")
 
-
-class TextPixieDoc(unittest.TestCase):
-    def test_jsxString(self):
-        jsx = "<component></component>"
-        self.assertEqual(
-            JSXElement.parse(jsx),
-            PSXBlockElementNode(PSXIdentiferNameNode("component"), [], []),
-        )
-
-        jsx_attr = "<component disabled></component>"
-        self.assertEqual(
-            JSXElement.parse(jsx_attr),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [PSXAttributeNode(PSXIdentiferNameNode("disabled"), None)],
-                [],
-            ),
-        )
-
-        jsx_attrval = "<component src='img_cat.jpg'></component>"
-        self.assertEqual(
-            JSXElement.parse(jsx_attrval),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("src"),
-                        PSXAttributeInitializerNode("img_cat.jpg"),
-                    )
-                ],
-                [],
-            ),
-        )
-
-        jsx_multiAttrval = "<component src='img_cat.jpg' width='300'></component>"
-        self.assertEqual(
-            JSXElement.parse(jsx_multiAttrval),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("src"),
-                        PSXAttributeInitializerNode("img_cat.jpg"),
-                    ),
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("width"),
-                        PSXAttributeInitializerNode("300"),
-                    ),
-                ],
-                [],
-            ),
-        )
-
-        jsx_multiAttrvalWithBooleanAttributes = (
-            "<component src='img_cat.jpg' width='300' checked></component>"
-        )
-        self.assertEqual(
-            JSXElement.parse(jsx_multiAttrvalWithBooleanAttributes),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("src"),
-                        PSXAttributeInitializerNode("img_cat.jpg"),
-                    ),
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("width"),
-                        PSXAttributeInitializerNode("300"),
-                    ),
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("checked"),
-                        None,
-                    ),
-                ],
-                [],
-            ),
-        )
-
-        jsx_unclosed = "<component>ABC"
-        self.assertRaises(ParseError, JSXElement.parse_strict, (jsx_unclosed))
-
-    def test_jsx_withChildren(self):
-        jsx_children = "<component><nested></nested></component>"
-        self.assertEqual(
-            JSXElement.parse(jsx_children),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [],
-                [PSXBlockElementNode(PSXIdentiferNameNode("nested"), [], [])],
-            ),
-        )
-
-        jsx_childrenAndAttributes = (
-            "<component disabled><nested width='300'></nested></component>"
-        )
-        self.assertEqual(
-            JSXElement.parse(jsx_childrenAndAttributes),
-            PSXBlockElementNode(
-                PSXIdentiferNameNode("component"),
-                [
-                    PSXAttributeNode(
-                        PSXIdentiferNameNode("disabled"),
-                        None,
-                    )
-                ],
-                [
-                    PSXBlockElementNode(
-                        PSXIdentiferNameNode("nested"),
-                        [
-                            PSXAttributeNode(
-                                PSXIdentiferNameNode("width"),
-                                PSXAttributeInitializerNode("300"),
-                            )
-                        ],
-                        [],
-                    )
-                ],
-            ),
-        )
+    def test_invalidPixieComponentsFail(self):
+        testcases = [
+            ("broken_selfclose", "<Victory claps={10}>"),
+            ("mismatched_tagname", "<Hello></ello>"),
+        ]
+        for testcase in testcases:
+            with self.subTest(msg=testcase[0]):
+                self.assertRaises(
+                    SyntaxError,
+                    TestPixieGrammar.parserModule.parse_string,
+                    testcase[1],
+                    mode="exec",
+                )
 
 
 if __name__ == "__main__":
