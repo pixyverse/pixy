@@ -690,7 +690,7 @@ blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* children=[pixie_expr
         ],
     keywords=[],
     LOCATIONS,
-    )  if open.string == close.string else None}
+    )  if open.string == close.string else self.raise_syntax_error_known_location(f"Mismatched closing tag for '<{open.string}>'", close)}
 blockbody: comps=[NEWLINE* statement] | [NEWLINE* pixiecomponent]  {comps}
 blockexpr: '{'e=[statements]'}' {e}
 pixieattrs: a=NAME attribval=(attrval | exprattr)? {(a.string, attribval.string if (attribval and hasattr(attribval,'string')) else attribval)}

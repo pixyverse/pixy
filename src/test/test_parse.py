@@ -124,6 +124,24 @@ c=<Hello greet={w}>
                     mode="exec",
                 )
 
+    def test_invalidPixieComponentsErrorReport(self):
+        testcases = [
+            ("broken_selfclose_1", "./data/invalid0.pix"),
+            ("broken_selfclose_2", "./data/invalid1.pix"),
+            ("mismatched_tagname", "./data/invalid2.pix"),
+        ]
+        for testcase in testcases:
+            TESTDATA_FILENAME = os.path.join(os.path.dirname(__file__), testcase[1])
+            with self.subTest(msg=testcase[0]):
+                if testcase[0] == "broken_selfclose_1":
+                    self.skipTest(
+                        "pegen parser throws error in invalid line number and fails"
+                    )
+                try:
+                    TestPixieGrammar.parserModule.parse_file(TESTDATA_FILENAME)
+                except SyntaxError as err:
+                    print(err)
+
 
 if __name__ == "__main__":
     unittest.main()
