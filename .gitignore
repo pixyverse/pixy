@@ -1,3 +1,8 @@
 __pycache__
 .venv
 .bin
+*.JUNK
+*.egg-info
+build
+dist
+parser.py
