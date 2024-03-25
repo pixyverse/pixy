@@ -1,7 +1,7 @@
 import os
 from astor.codegen import to_source
 
-from pixie.genparser import generatePixieParserModule
+from pixieverse.pixie.genparser import generatePixieParserModule
 
 
 def transpile_source(source: str):

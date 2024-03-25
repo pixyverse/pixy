@@ -1,6 +1,6 @@
 import unittest
 
-from pixie.transpile import transpile_source
+from pixieverse.pixie.transpile import transpile_source
 
 
 class TestTranspileSource(unittest.TestCase):
