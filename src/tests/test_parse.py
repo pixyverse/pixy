@@ -12,10 +12,10 @@ class TestPixieGrammar(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        script_dir = os.path.dirname(__file__)
-        grammar_file_path = "../pixieverse/pixie/grammar/pypixie.gram"
-        grammar_file = os.path.join(script_dir, grammar_file_path)
-        module = generatePixieParserModule(grammar_file)
+        # script_dir = os.path.dirname(__file__)
+        # grammar_file_path = "../pixieverse/pixie/grammar/pypixie.gram"
+        # grammar_file = os.path.join(script_dir, grammar_file_path)
+        module = generatePixieParserModule()
         assert module is not None
         TestPixieGrammar.parserModule = module
 

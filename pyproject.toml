@@ -1,12 +1,12 @@
 [project]
 name = "pixieverse.pixie"
-version = "0.1.dev15"
+dynamic = ["version"]
 authors = [
   { name="Pradeep Roark", email="pradeep.roark@gmail.com" },
 ]
 description = "A package to parse pixie component files which allow you to author components in python"
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.9"
 classifiers = [
   # How mature is this project? Common values are
   #   3 - Alpha
@@ -25,7 +25,6 @@ classifiers = [
 
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -49,8 +48,11 @@ publish = ["twine"]
 
 
 [build-system]
-requires = ["setuptools","pegen >= 0.3.0"]
+requires = ["setuptools>=64", "setuptools_scm>=8", "pegen >= 0.3.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_file = "src/pixieverse/pixie/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]

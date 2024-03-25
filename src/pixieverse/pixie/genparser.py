@@ -11,6 +11,7 @@ from pegen.validator import validate_grammar
 from pegen.python_generator import PythonParserGenerator
 from pegen.parser_generator import ParserGenerator
 from io import StringIO
+from importlib.resources import as_file, files
 
 
 def generatePixieParser(grammarPath: str):
@@ -58,15 +59,18 @@ def load_module(source, module_name=None):
     return None
 
 
-def generatePixieParserModule(grammarPath: str) -> ModuleType:
+def generatePixieParserModule() -> ModuleType:
+
     module = None
-    script_dir = os.path.dirname(__file__)
-    grammar_file = os.path.join(script_dir, grammarPath)
-    parsy = generatePixieParser(grammar_file)
-    parsy.seek(0)
-    with tempfile.NamedTemporaryFile() as fp:
-        while bite := parsy.read():
-            fp.write(bytes(bite, encoding="utf-8"))
-        module = load_module(fp.name)
+    grammar_file_context = as_file(
+        files("pixieverse.pixie.grammar").joinpath("pypixie.gram")
+    )
+    with grammar_file_context as grammar_file:
+        parsy = generatePixieParser(str(grammar_file))
+        parsy.seek(0)
+        with tempfile.NamedTemporaryFile() as fp:
+            while bite := parsy.read():
+                fp.write(bytes(bite, encoding="utf-8"))
+            module = load_module(fp.name)
     assert module is not None
     return module
