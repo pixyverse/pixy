@@ -8,7 +8,7 @@ class TestTranspileSource(unittest.TestCase):
         input = ""
         expected = ""
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpilePlainPy(self) -> None:
         input = """a = 1
@@ -16,7 +16,7 @@ print(a)
 """
         expected = input
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileInvalidPy(self) -> None:
         input = """
@@ -35,7 +35,7 @@ a = createElement('Hello', {})
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileSelfWithAttributes(self) -> None:
         input = """
@@ -48,7 +48,7 @@ a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Sir'"})
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileSelfWithAttributesDuplicateOverride(self) -> None:
         """
@@ -66,7 +66,7 @@ a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Mr'",
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileNestedBlockElements(self) -> None:
         input = """
@@ -79,7 +79,7 @@ a = createElement('Terminal', {}, [createElement('StatusBar', {}, [])])
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileNestedBlockElementsWithAttributes(self) -> None:
         input = """
@@ -93,7 +93,7 @@ a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileAttributeExpressionsWithVars(self) -> None:
         input = """
@@ -106,7 +106,7 @@ a = createElement('Display', {'dimensions': 100 + 200})
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileAttributeExpressionsWithFormattedString(self) -> None:
         input = """
@@ -120,7 +120,7 @@ a = createElement('Greeter', {'greeting':
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileComponentPassedAsProp(self) -> None:
         input = """
@@ -133,7 +133,7 @@ a = createElement('Hello', {'greet': createElement('World', {})})
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
     def test_transpileDeclaredComponentPassedAsProp(self) -> None:
         input = """
@@ -148,7 +148,7 @@ a = createElement('Hello', {'greet': w})
 print(a)
 """
         transpiled = transpile_source(input)
-        self.assertEquals(expected, transpiled)
+        self.assertEqual(expected, transpiled)
 
 
 if __name__ == "__main__":
