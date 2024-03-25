@@ -1,6 +1,6 @@
 [project]
 name = "pixieverse.pixie"
-version = "0.1.dev15"
+dynamic = ["version"]
 authors = [
   { name="Pradeep Roark", email="pradeep.roark@gmail.com" },
 ]
@@ -49,8 +49,11 @@ publish = ["twine"]
 
 
 [build-system]
-requires = ["setuptools","pegen >= 0.3.0"]
+requires = ["setuptools>=64", "setuptools_scm>=8", "pegen >= 0.3.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_file = "src/pixieverse/pixie/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
