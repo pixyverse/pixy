@@ -3,7 +3,7 @@ from types import ModuleType
 import unittest
 import tempfile
 
-from pixie.genparser import generatePixieParserModule
+from pixieverse.pixie.genparser import generatePixieParserModule
 
 
 class TestPixieGrammar(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestPixieGrammar(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         script_dir = os.path.dirname(__file__)
-        grammar_file_path = "../pixie/grammar/pypixie.gram"
+        grammar_file_path = "../pixieverse/pixie/grammar/pypixie.gram"
         grammar_file = os.path.join(script_dir, grammar_file_path)
         module = generatePixieParserModule(grammar_file)
         assert module is not None
