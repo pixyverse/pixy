@@ -14,7 +14,7 @@ class TestTranspileSource(unittest.TestCase):
         input = """a = 1
 print(a)
 """
-        expected = input
+        expected = input.rstrip()
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -32,8 +32,7 @@ print(a)
 """
         expected = """from runtime import createElement
 a = createElement('Hello', {})
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -45,8 +44,7 @@ print(a)
 """
         expected = """from runtime import createElement
 a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Sir'"})
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -61,10 +59,8 @@ a = <Hello who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Mr'",
-    'salutation': "'Sir'"})
-print(a)
-"""
+a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Mr'", 'salutation': "'Sir'"})
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -76,8 +72,7 @@ print(a)
 """
         expected = """from runtime import createElement
 a = createElement('Terminal', {}, [createElement('StatusBar', {}, [])])
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -88,10 +83,8 @@ a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {
-    'status': "'IDLE'"}, [])])
-print(a)
-"""
+a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {'status': "'IDLE'"}, [])])
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -103,8 +96,7 @@ print(a)
 """
         expected = """from runtime import createElement
 a = createElement('Display', {'dimensions': 100 + 200})
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -118,10 +110,8 @@ a = <Greeter greeting={f'Have a lovely day {salutation} {person}'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Greeter', {'greeting':
-    "f'Have a lovely day {salutation} {person}'"})
-print(a)
-"""
+a = createElement('Greeter', {'greeting': "f'Have a lovely day {salutation} {person}'"})
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -133,8 +123,7 @@ print(a)
 """
         expected = """from runtime import createElement
 a = createElement('Hello', {'greet': createElement('World', {})})
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
@@ -148,8 +137,7 @@ print(a)
         expected = """from runtime import createElement
 w = createElement('World', {})
 a = createElement('Hello', {'greet': w})
-print(a)
-"""
+print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 

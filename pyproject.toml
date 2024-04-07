@@ -32,8 +32,7 @@ classifiers = [
 ]
 keywords = ["templating","web","parser","jsx"]
 dependencies = [
-  "pegen >= 0.3.0",
-  "astor >= 0.8.1"
+  "pegen >= 0.3.0"
 ]
 
 [project.optional-dependencies]
