@@ -7,3 +7,4 @@ build
 dist
 parser.py
 _version.py
+.vscode
