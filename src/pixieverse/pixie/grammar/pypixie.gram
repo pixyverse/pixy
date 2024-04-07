@@ -681,18 +681,17 @@ selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
     keywords=[],
     LOCATIONS,
     ) }
-blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* children=[pixie_expression_block] NEWLINE*'<''/'close=NAME'>' {ast.Call(
+blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* body=blockbody* NEWLINE*'<''/'close=NAME'>' {ast.Call(
     func=ast.Name(id='createElement', ctx=Load, LOCATIONS),
     args=[
             ast.Constant(value=open.string, LOCATIONS),
             ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
-            ast.List(elts=[children] if children else [], ctx=Load, LOCATIONS)
+            ast.List(elts=[body] if body else [], ctx=Load, LOCATIONS)
         ],
     keywords=[],
     LOCATIONS,
     )  if open.string == close.string else self.raise_syntax_error_known_location(f"Mismatched closing tag for '<{open.string}>'", close)}
-blockbody: comps=[NEWLINE* statement] | [NEWLINE* pixiecomponent]  {comps}
-blockexpr: '{'e=[statements]'}' {e}
+blockbody: children=pixiecomponent {children}
 pixieattrs: a=NAME attribval=(attrval | exprattr)? {(a.string, attribval.string if (attribval and hasattr(attribval,'string')) else attribval)}
 attrval: '=''{'(E=STRING)'}' {E}
 exprattr: '=''{'(E=expression)'}' {E}
