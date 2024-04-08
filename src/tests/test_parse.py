@@ -110,6 +110,32 @@ c=<Hello greet={w}>
         except SyntaxError:
             self.fail("No exception expected")
 
+    def test_ExpressionsInBlockElement(self):
+        input = """
+c=<Hello>
+{1+2}
+{True}
+</Hello>
+"""
+        try:
+            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+        except SyntaxError:
+            self.fail("No exception expected")
+
+    def test_GenExpressionsInBlockElement(self):
+        input = """
+names = ['Alice','Bob','Charlie']
+c=<Hello>
+<ul>
+{map(lambda name: <li>{name}</li>, names)}
+</ul>
+</Hello>
+"""
+        try:
+            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+        except SyntaxError:
+            self.fail("No exception expected")
+
     def test_invalidPixieComponentsFail(self):
         testcases = [
             ("broken_selfclose", "<Victory claps={10}>"),

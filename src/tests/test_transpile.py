@@ -88,6 +88,34 @@ print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
+    def test_transpileNestedBlockElementsWithExpressions(self) -> None:
+        input = """
+from runtime import createElement
+a = <Terminal>{200+300}{'TEST'}</Terminal>
+print(a)
+"""
+        expected = """from runtime import createElement
+a = createElement('Terminal', {}, [200 + 300, 'TEST'])
+print(a)"""
+        transpiled = transpile_source(input)
+        self.assertEqual(expected, transpiled)
+
+    def test_transpileGenExpressionsInBlockElements(self) -> None:
+        input = """
+from runtime import createElement
+names = ['Alice','Bob','Charlie']
+c=<Hello>
+<ul>
+{map(lambda name: <li>{name}</li>, names)}
+</ul>
+</Hello>
+"""
+        expected = """from runtime import createElement
+names = ['Alice', 'Bob', 'Charlie']
+c = createElement('Hello', {}, [createElement('ul', {}, [map(lambda name: createElement('li', {}, [name]), names)])])"""
+        transpiled = transpile_source(input)
+        self.assertEqual(expected, transpiled)
+
     def test_transpileAttributeExpressionsWithVars(self) -> None:
         input = """
 from runtime import createElement
