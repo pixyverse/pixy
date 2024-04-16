@@ -564,6 +564,11 @@ primitives = (bool, str, int, float, type(None))
 def is_primitive(obj):
     return type(obj) in primitives
 
+def getCallableFunctionForPixie(name):
+    if name.find("_") > 0:
+        return name
+    else:
+        return 'createElement'
 '''
 
 
@@ -673,7 +678,7 @@ annotated_rhs: yield_expr | star_expressions
 
 pixiecomponent: selfclosingcomponent | blockcomponent
 selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
-    func=ast.Name(id='createElement', ctx=Load, LOCATIONS),
+    func=ast.Name(id=getCallableFunctionForPixie(name.string), ctx=Load, LOCATIONS),
     args=[
             ast.Constant(value=name.string, LOCATIONS),
             ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
@@ -682,7 +687,7 @@ selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
     LOCATIONS,
     ) }
 blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* body=blockbody* NEWLINE*'<''/'close=NAME'>' {ast.Call(
-    func=ast.Name(id='createElement', ctx=Load, LOCATIONS),
+    func=ast.Name(id=getCallableFunctionForPixie(open.string), ctx=Load, LOCATIONS),
     args=[
             ast.Constant(value=open.string, LOCATIONS),
             ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
