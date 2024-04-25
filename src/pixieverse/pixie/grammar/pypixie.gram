@@ -698,7 +698,7 @@ blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* body=blockbody* NEWL
     )  if open.string == close.string else self.raise_syntax_error_known_location(f"Mismatched closing tag for '<{open.string}>'", close)}
 blockbody: child=(STRING | pixiecomponent | '{' expression '}' ) NEWLINE* {ast.Constant(value=ast.literal_eval(child.string), LOCATIONS) if hasattr(child, 'string') else child}
 pixieattrs: a=NAME attribval=(attrval | exprattr)? {(a.string, attribval.string if (attribval and hasattr(attribval,'string')) else attribval)}
-attrval: '=''{'(E=STRING)'}' {E}
+attrval: '='(E=STRING) {E}
 exprattr: '=''{'(E=expression)'}' {E}
 
 augassign:

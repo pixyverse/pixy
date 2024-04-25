@@ -43,7 +43,7 @@ a = <Hello who={'Bertie Wooster'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Sir'"})
+a = createElement('Hello', {'who': 'Bertie Wooster', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -59,7 +59,7 @@ a = <Hello who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Hello', {'who': "'Bertie Wooster'", 'salutation': "'Mr'", 'salutation': "'Sir'"})
+a = createElement('Hello', {'who': 'Bertie Wooster', 'salutation': 'Mr', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -83,7 +83,7 @@ a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {'status': "'IDLE'"}, [])])
+a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {'status': 'IDLE'}, [])])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -138,7 +138,7 @@ a = <Greeter greeting={f'Have a lovely day {salutation} {person}'}/>
 print(a)
 """
         expected = """from runtime import createElement
-a = createElement('Greeter', {'greeting': "f'Have a lovely day {salutation} {person}'"})
+a = createElement('Greeter', {'greeting': f'Have a lovely day {salutation} {person}'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)

@@ -74,6 +74,7 @@ a += 1
     def test_ComponentAttributes(self):
         testcases = [
             ("attribute_val", "<Victory claps={10}/>"),
+            ("plain_string", "<p title='Hover Here'></p>"),
             ("void_attribute", "<Button disabled/>"),
             (
                 "block_attribute",
