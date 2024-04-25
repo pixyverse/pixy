@@ -169,6 +169,53 @@ print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
+    def test_transpileLiteralStringInBlockElement(self) -> None:
+        input = """
+from runtime import createElement
+w = <Hello>"World"</Hello>
+print(w)
+"""
+        expected = """from runtime import createElement
+w = createElement('Hello', {}, ['World'])
+print(w)"""
+        transpiled = transpile_source(input)
+        self.assertEqual(expected, transpiled)
+
+    def test_transpileMultipleLiteralStringInBlockElement(self) -> None:
+        input = """
+from runtime import createElement
+w = <Hello>"World"
+"Gone By"</Hello>
+print(w)
+"""
+        expected = """from runtime import createElement
+w = createElement('Hello', {}, ['World', 'Gone By'])
+print(w)"""
+        transpiled = transpile_source(input)
+        self.assertEqual(expected, transpiled)
+
+    def test_transpileMixedInBlockElement(self) -> None:
+        input = """
+
+from runtime import createElement
+def greet_me(tagName, props, children):
+        return <p>"Morning"</p>
+
+w = <Hello>
+<greet_me/>
+"World"
+"Gone By"</Hello>
+print(w)
+"""
+        expected = """from runtime import createElement
+
+def greet_me(tagName, props, children):
+    return createElement('p', {}, ['Morning'])
+w = createElement('Hello', {}, [greet_me('greet_me', {}), 'World', 'Gone By'])
+print(w)"""
+        transpiled = transpile_source(input)
+        self.assertEqual(expected, transpiled)
+
 
 if __name__ == "__main__":
     unittest.main()

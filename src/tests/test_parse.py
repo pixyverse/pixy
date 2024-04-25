@@ -136,6 +136,17 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
+    def test_LiteralStringsInBlockElement(self):
+        input = """
+c=<Hello>
+"This is a literal string"
+</Hello>
+"""
+        try:
+            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+        except SyntaxError:
+            self.fail("No exception expected")
+
     def test_invalidPixieComponentsFail(self):
         testcases = [
             ("broken_selfclose", "<Victory claps={10}>"),
