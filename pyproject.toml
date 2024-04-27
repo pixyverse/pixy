@@ -43,7 +43,11 @@ dev = [
   "flake8",
   "mypy"
 ]
+
 publish = ["twine"]
+
+[project.scripts]
+pixie = "pixieverse.pixie.cli:runtranspile"
 
 
 [build-system]
