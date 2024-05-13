@@ -2,7 +2,10 @@ import ast
 from pixieverse.pixie.genparser import generatePixieParserModule
 
 
-def transpile_source(source: str):
+def transpile_source_tomodule(source: str) -> ast.Module:
     module = generatePixieParserModule()
-    code = module.parse_string(source, mode="exec")
-    return ast.unparse(code)
+    return module.parse_string(source, mode="exec")
+
+
+def transpile_source(source: str) -> str:
+    return ast.unparse(transpile_source_tomodule(source))
