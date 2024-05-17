@@ -6,6 +6,7 @@ authors = [
 ]
 description = "A package to parse pixie component files which allow you to author components in python"
 readme = "README.md"
+license = "Apache-2.0"
 requires-python = ">= 3.9"
 classifiers = [
   # How mature is this project? Common values are
@@ -21,7 +22,7 @@ classifiers = [
   "Topic :: Software Development :: Code Generators",
   "Topic :: Software Development :: Libraries",
 
-  "License :: Other/Proprietary License",
+  "License :: OSI Approved :: Apache Software License",
 
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
