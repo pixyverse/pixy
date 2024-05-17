@@ -1,6 +1,8 @@
 Pixie
 ------
 
+[![Build](https://github.com/versionprime/pixie/actions/workflows/ci.yml/badge.svg)](https://github.com/versionprime/pixie/actions/workflows/ci.yml)
+
 What is Pixie
 ---------------
 
