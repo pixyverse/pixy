@@ -15,16 +15,17 @@ Example
 todo_page = (
     <div class_name="TodoList">
         <todo_list>
-            <todo status={Status.Completed}>"Remember the milk 🥛"</todo>
-            <todo status={Status.Todo}>"Eggs 🥚"</todo>
+            <todo_item status={Status.Completed}>"Remember the milk 🥛"</todo_item>
+            <todo_item status={Status.Todo}>"Eggs 🥚"</todo_item>
         </todo_list>
     </div>
+    )
 ```
 
 
 Known Limitations
 -------------------
-Strings within tags alwayes need to be quoted within single or double quotes.
+Strings within tags always need to be quoted within single or double quotes.
 
 Development Status
 --------------------
