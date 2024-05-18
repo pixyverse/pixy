@@ -18,7 +18,7 @@ cli_parser.add_argument(
 )
 
 
-def runtranspile():
+def runtranspile() -> None:
     args = cli_parser.parse_args()
     if args.pixfile:
         with args.pixfile as inputfile:

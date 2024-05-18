@@ -1,25 +1,20 @@
 import os
 from types import ModuleType
 import unittest
-import tempfile
 
 from pixieverse.pixie.genparser import generatePixieParserModule
 
 
 class TestPixieGrammar(unittest.TestCase):
-    tempFile: tempfile._TemporaryFileWrapper
     parserModule: ModuleType
 
     @classmethod
-    def setUpClass(cls):
-        # script_dir = os.path.dirname(__file__)
-        # grammar_file_path = "../pixieverse/pixie/grammar/pypixie.gram"
-        # grammar_file = os.path.join(script_dir, grammar_file_path)
+    def setUpClass(cls) -> None:
         module = generatePixieParserModule()
         assert module is not None
         TestPixieGrammar.parserModule = module
 
-    def test_simplePyIsValidPixie(self):
+    def test_simplePyIsValidPixie(self) -> None:
         testcases = [
             ("single_line", "a = 1;print(a)"),
             (
@@ -38,7 +33,7 @@ print(a)
                 except SyntaxError:
                     self.fail("No exception expected")
 
-    def test_invalidPyReportsBroken(self):
+    def test_invalidPyReportsBroken(self) -> None:
         testcases = [
             ("single_line", "a = 1print(a)"),
             (
@@ -59,7 +54,7 @@ a += 1
                     mode="exec",
                 )
 
-    def test_psxAssignment(self):
+    def test_psxAssignment(self) -> None:
         testcases = [
             ("assign_closed_element", "a=<Hello/>"),
             ("assign_block_element", "a=<Hello></Hello>"),
@@ -71,7 +66,7 @@ a += 1
                 except SyntaxError:
                     self.fail("No exception expected")
 
-    def test_ComponentAttributes(self):
+    def test_ComponentAttributes(self) -> None:
         testcases = [
             ("attribute_val", "<Victory claps={10}/>"),
             ("plain_string", "<p title='Hover Here'></p>"),
@@ -89,7 +84,7 @@ a += 1
                 except SyntaxError:
                     self.fail("No exception expected")
 
-    def test_nestedComponents(self):
+    def test_nestedComponents(self) -> None:
         input = """
 c=<Hello>
 <World/>
@@ -100,7 +95,7 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
-    def test_passComponentAsProp(self):
+    def test_passComponentAsProp(self) -> None:
         input = """
 w=<World/>
 c=<Hello greet={w}>
@@ -111,7 +106,7 @@ c=<Hello greet={w}>
         except SyntaxError:
             self.fail("No exception expected")
 
-    def test_ExpressionsInBlockElement(self):
+    def test_ExpressionsInBlockElement(self) -> None:
         input = """
 c=<Hello>
 {1+2}
@@ -123,7 +118,7 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
-    def test_GenExpressionsInBlockElement(self):
+    def test_GenExpressionsInBlockElement(self) -> None:
         input = """
 names = ['Alice','Bob','Charlie']
 c=<Hello>
@@ -137,7 +132,7 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
-    def test_LiteralStringsInBlockElement(self):
+    def test_LiteralStringsInBlockElement(self) -> None:
         input = """
 c=<Hello>
 "This is a literal string"
@@ -148,7 +143,7 @@ c=<Hello>
         except SyntaxError:
             self.fail("No exception expected")
 
-    def test_invalidPixieComponentsFail(self):
+    def test_invalidPixieComponentsFail(self) -> None:
         testcases = [
             ("broken_selfclose", "<Victory claps={10}>"),
             ("mismatched_tagname", "<Hello></ello>"),
@@ -162,7 +157,7 @@ c=<Hello>
                     mode="exec",
                 )
 
-    def test_invalidPixieComponentsErrorReport(self):
+    def test_invalidPixieComponentsErrorReport(self) -> None:
         testcases = [
             ("broken_selfclose_1", "./data/invalid0.pix"),
             ("broken_selfclose_2", "./data/invalid1.pix"),

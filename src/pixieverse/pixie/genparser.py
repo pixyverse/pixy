@@ -1,6 +1,5 @@
 import importlib.util
 from importlib.machinery import SourceFileLoader
-import os
 import secrets
 import string
 import sys
@@ -14,7 +13,7 @@ from io import StringIO
 from importlib.resources import as_file, files
 
 
-def generatePixieParser(grammarPath: str):
+def generatePixieParser(grammarPath: str) -> StringIO:
     outputPath = StringIO()
     grammar, _, _ = build_parser(grammarPath)
     validate_grammar(grammar)
@@ -23,7 +22,7 @@ def generatePixieParser(grammarPath: str):
     return outputPath
 
 
-def gensym(length=32, prefix="gensym_"):
+def gensym(length: int = 32, prefix: str = "gensym_") -> str:
     """
     generates a fairly unique symbol, used to make a module name,
     used as a helper function for load_module
@@ -36,7 +35,7 @@ def gensym(length=32, prefix="gensym_"):
     return prefix + symbol
 
 
-def load_module(source, module_name=None):
+def load_module(source: str, module_name: str | None = None) -> ModuleType | None:
     """
     reads file source and loads it as a module
 

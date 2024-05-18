@@ -8,11 +8,13 @@ import os
 
 class CustomCommand(Command):
     def initialize_options(self) -> None:
-        self.bdist_dir = None
+        self.bdist_dir: Path | None = None
 
     def finalize_options(self) -> None:
         with suppress(Exception):
-            self.bdist_dir = Path(self.get_finalized_command("bdist_wheel").bdist_dir)
+            bdist_command = self.get_finalized_command("bdist_wheel")
+            if hasattr(bdist_command, "bdist_dir"):
+                self.bdist_dir = Path(getattr(bdist_command, "bdist_dir"))
 
     def run(self) -> None:
         self.announce("Generate parser.py ...", level=logging.INFO)
