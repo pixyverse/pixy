@@ -22,6 +22,38 @@ todo_page = (
     )
 ```
 
+Development
+-------------
+
+1. ```git checkout github.com/versionprime/pixie.git```
+2.  ```cd pixie```
+3.  create a virtualenv environment and activate it.
+
+    ```shell
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+4.  Install dependencies
+    ```shell
+    pip install ".[dev]"
+    ```
+
+5.  Run Tests
+    ```shell
+    # Run Tests
+    cd src && python -m unittest
+    ```
+6. Example Pixie file
+    ```python
+    # a.pix
+    comp=<div>"Hello World"</div>
+    print(comp)
+    ```
+    Transpile
+    ```shell
+    # Transpile a sample pixie file
+    python -m pixieverse.pixie -p test.pix -o test.py
+    ```
 
 Known Limitations
 -------------------
