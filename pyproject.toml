@@ -7,7 +7,7 @@ authors = [
 description = "A package to parse pixie component files which allow you to author components in python"
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">= 3.9"
+requires-python = ">= 3.10"
 classifiers = [
   # How mature is this project? Common values are
   #   3 - Alpha
@@ -26,7 +26,6 @@ classifiers = [
 
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
