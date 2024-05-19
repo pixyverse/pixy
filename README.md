@@ -6,7 +6,7 @@ Pixie
 What is Pixie
 ---------------
 
-pixie is a transpiler that transpiles pixie files into regular python code. Pixie files are JSX inspired component description formats that brings markup style declarative language natively embedded in python.
+pixie is a transpiler that transpiles pixie files into regular python code. Pixie files are JSX inspired component description formats that brings markup style declarative language natively embedded in python. Check out it's [DESIGN](DESIGN.md)
 
 Example
 --------
