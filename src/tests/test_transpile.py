@@ -26,24 +26,24 @@ print(a)"""
 
     def test_transpileSelfClosingComponent(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Hello/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Hello', {})
+        expected = """from runtime import create_element
+a = create_element('Hello', {})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileSelfWithAttributes(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Hello who={'Bertie Wooster'} salutation={'Sir'}/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Hello', {'who': 'Bertie Wooster', 'salutation': 'Sir'})
+        expected = """from runtime import create_element
+a = create_element('Hello', {'who': 'Bertie Wooster', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -54,55 +54,55 @@ print(a)"""
         will win just as normal as a python dict.
         """
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Hello who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Hello', {'who': 'Bertie Wooster', 'salutation': 'Mr', 'salutation': 'Sir'})
+        expected = """from runtime import create_element
+a = create_element('Hello', {'who': 'Bertie Wooster', 'salutation': 'Mr', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileNestedBlockElements(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Terminal><StatusBar></StatusBar></Terminal>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Terminal', {}, [createElement('StatusBar', {}, [])])
+        expected = """from runtime import create_element
+a = create_element('Terminal', {}, [create_element('StatusBar', {}, [])])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileNestedBlockElementsWithAttributes(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Terminal', {'width': 100}, [createElement('StatusBar', {'status': 'IDLE'}, [])])
+        expected = """from runtime import create_element
+a = create_element('Terminal', {'width': 100}, [create_element('StatusBar', {'status': 'IDLE'}, [])])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileNestedBlockElementsWithExpressions(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Terminal>{200+300}{'TEST'}</Terminal>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Terminal', {}, [200 + 300, 'TEST'])
+        expected = """from runtime import create_element
+a = create_element('Terminal', {}, [200 + 300, 'TEST'])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileGenExpressionsInBlockElements(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 names = ['Alice','Bob','Charlie']
 c=<Hello>
 <ul>
@@ -110,20 +110,20 @@ c=<Hello>
 </ul>
 </Hello>
 """
-        expected = """from runtime import createElement
+        expected = """from runtime import create_element
 names = ['Alice', 'Bob', 'Charlie']
-c = createElement('Hello', {}, [createElement('ul', {}, [map(lambda name: createElement('li', {}, [name]), names)])])"""
+c = create_element('Hello', {}, [create_element('ul', {}, [map(lambda name: create_element('li', {}, [name]), names)])])"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileAttributeExpressionsWithVars(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Display dimensions={100+200}/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Display', {'dimensions': 100 + 200})
+        expected = """from runtime import create_element
+a = create_element('Display', {'dimensions': 100 + 200})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -133,63 +133,63 @@ print(a)"""
     )
     def test_transpileAttributeExpressionsWithFormattedString(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Greeter greeting={f'Have a lovely day {salutation} {person}'}/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Greeter', {'greeting': f'Have a lovely day {salutation} {person}'})
+        expected = """from runtime import create_element
+a = create_element('Greeter', {'greeting': f'Have a lovely day {salutation} {person}'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileComponentPassedAsProp(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 a = <Hello greet={<World/>}/>
 print(a)
 """
-        expected = """from runtime import createElement
-a = createElement('Hello', {'greet': createElement('World', {})})
+        expected = """from runtime import create_element
+a = create_element('Hello', {'greet': create_element('World', {})})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileDeclaredComponentPassedAsProp(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 w = <World/>
 a = <Hello greet={w}/>
 print(a)
 """
-        expected = """from runtime import createElement
-w = createElement('World', {})
-a = createElement('Hello', {'greet': w})
+        expected = """from runtime import create_element
+w = create_element('World', {})
+a = create_element('Hello', {'greet': w})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileLiteralStringInBlockElement(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 w = <Hello>"World"</Hello>
 print(w)
 """
-        expected = """from runtime import createElement
-w = createElement('Hello', {}, ['World'])
+        expected = """from runtime import create_element
+w = create_element('Hello', {}, ['World'])
 print(w)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
     def test_transpileMultipleLiteralStringInBlockElement(self) -> None:
         input = """
-from runtime import createElement
+from runtime import create_element
 w = <Hello>"World"
 "Gone By"</Hello>
 print(w)
 """
-        expected = """from runtime import createElement
-w = createElement('Hello', {}, ['World', 'Gone By'])
+        expected = """from runtime import create_element
+w = create_element('Hello', {}, ['World', 'Gone By'])
 print(w)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -197,7 +197,7 @@ print(w)"""
     def test_transpileMixedInBlockElement(self) -> None:
         input = """
 
-from runtime import createElement
+from runtime import create_element
 def greet_me(tagName, props, children):
         return <p>"Morning"</p>
 
@@ -207,11 +207,11 @@ w = <Hello>
 "Gone By"</Hello>
 print(w)
 """
-        expected = """from runtime import createElement
+        expected = """from runtime import create_element
 
 def greet_me(tagName, props, children):
-    return createElement('p', {}, ['Morning'])
-w = createElement('Hello', {}, [greet_me('greet_me', {}), 'World', 'Gone By'])
+    return create_element('p', {}, ['Morning'])
+w = create_element('Hello', {}, [greet_me('greet_me', {}), 'World', 'Gone By'])
 print(w)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)

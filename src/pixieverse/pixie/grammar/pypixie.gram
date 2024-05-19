@@ -568,7 +568,7 @@ def getCallableFunctionForPixie(name):
     if name.find("_") > 0:
         return name
     else:
-        return 'createElement'
+        return 'create_element'
 '''
 
 
