@@ -29,7 +29,7 @@ print(a)
         for testcase in testcases:
             with self.subTest(msg=testcase[0]):
                 try:
-                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                    TestPixyGrammar.parserModule.parse_string(testcase[1], mode="exec")
                 except SyntaxError:
                     self.fail("No exception expected")
 
@@ -49,7 +49,7 @@ a += 1
             with self.subTest(msg=testcase[0]):
                 self.assertRaises(
                     SyntaxError,
-                    TestPixieGrammar.parserModule.parse_string,
+                    TestPixyGrammar.parserModule.parse_string,
                     testcase[1],
                     mode="exec",
                 )
@@ -62,7 +62,7 @@ a += 1
         for testcase in testcases:
             with self.subTest(msg=testcase[0]):
                 try:
-                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                    TestPixyGrammar.parserModule.parse_string(testcase[1], mode="exec")
                 except SyntaxError:
                     self.fail("No exception expected")
 
@@ -80,7 +80,7 @@ a += 1
         for testcase in testcases:
             with self.subTest(msg=testcase[0]):
                 try:
-                    TestPixieGrammar.parserModule.parse_string(testcase[1], mode="exec")
+                    TestPixyGrammar.parserModule.parse_string(testcase[1], mode="exec")
                 except SyntaxError:
                     self.fail("No exception expected")
 
@@ -91,7 +91,7 @@ c=<Hello>
 </Hello>
 """
         try:
-            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+            TestPixyGrammar.parserModule.parse_string(input, mode="exec")
         except SyntaxError:
             self.fail("No exception expected")
 
@@ -102,7 +102,7 @@ c=<Hello greet={w}>
 </Hello>
 """
         try:
-            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+            TestPixyGrammar.parserModule.parse_string(input, mode="exec")
         except SyntaxError:
             self.fail("No exception expected")
 
@@ -114,7 +114,7 @@ c=<Hello>
 </Hello>
 """
         try:
-            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+            TestPixyGrammar.parserModule.parse_string(input, mode="exec")
         except SyntaxError:
             self.fail("No exception expected")
 
@@ -128,7 +128,7 @@ c=<Hello>
 </Hello>
 """
         try:
-            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+            TestPixyGrammar.parserModule.parse_string(input, mode="exec")
         except SyntaxError:
             self.fail("No exception expected")
 
@@ -139,7 +139,7 @@ c=<Hello>
 </Hello>
 """
         try:
-            TestPixieGrammar.parserModule.parse_string(input, mode="exec")
+            TestPixyGrammar.parserModule.parse_string(input, mode="exec")
         except SyntaxError:
             self.fail("No exception expected")
 
@@ -152,7 +152,7 @@ c=<Hello>
             with self.subTest(msg=testcase[0]):
                 self.assertRaises(
                     SyntaxError,
-                    TestPixieGrammar.parserModule.parse_string,
+                    TestPixyGrammar.parserModule.parse_string,
                     testcase[1],
                     mode="exec",
                 )
@@ -169,7 +169,7 @@ c=<Hello>
                 if testcase[0] == "broken_selfclose_1":
                     self.skipTest("pegen parser throws error in invalid line number and fails")
                 try:
-                    TestPixieGrammar.parserModule.parse_file(TESTDATA_FILENAME)
+                    TestPixyGrammar.parserModule.parse_file(TESTDATA_FILENAME)
                 except SyntaxError as err:
                     print(err)
 
