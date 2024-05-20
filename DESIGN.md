@@ -1,4 +1,4 @@
-# Pixie Design
+# Pixy Design
 
 
 ## Motivation
@@ -7,13 +7,13 @@ Declarative and component-oriented UI frameworks got a massive boost with [react
 
 Python frameworks are just catching up, with the templating legend Jinja2 still reigning supreme. However, its approach to treating everything as strings must be revised in the component age.
 
-Pixie aims to intermix HTML with regular Python code.
+Pixy aims to intermix HTML with regular Python code.
 
 ## Approach
 
-Pixie with file extension (.pix) will hold this mixed code.
+Pixy with file extension (.pix) will hold this mixed code.
 
-All regular Python code is valid Pixie code. Pixie adds support for <component/> tags interspersed in Python code. The tags, like any other Python expression, are evaluated at runtime. The best way to support the entire Python syntax in Pixie code is to rely on the underlying Python grammar, and fortunately, the Python team has cleanly exposed the same for various reasons here. We have maximum conformance if we can extend this grammar with component support. And that is the achievement of this project. We can now support <tags/> in Python code with minimal extension to the core Python grammar.
+All regular Python code is valid Pixy code. Pixy adds support for <component/> tags interspersed in Python code. The tags, like any other Python expression, are evaluated at runtime. The best way to support the entire Python syntax in Pixy code is to rely on the underlying Python grammar, and fortunately, the Python team has cleanly exposed the same for various reasons here. We have maximum conformance if we can extend this grammar with component support. And that is the achievement of this project. We can now support <tags/> in Python code with minimal extension to the core Python grammar.
 
 To mean something, these <tags/> have to be transformed into something meaningful as Python primitives (strings, ints, etc.) That is achieved by the grammar action generating calls to a function ```create_element``` with all the context.
 

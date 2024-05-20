@@ -20,15 +20,15 @@ class CustomCommand(Command):
         self.announce("Generate parser.py ...", level=logging.INFO)
         if self.bdist_dir:
             self.bdist_dir.mkdir(parents=True, exist_ok=True)
-            self.mkpath(os.path.join(self.bdist_dir, "pixieverse", "pixie"))
+            self.mkpath(os.path.join(self.bdist_dir, "pixyverse", "pixy"))
             self.spawn(
                 [
                     "python",
                     "-m",
                     "pegen",
-                    "./src/pixieverse/pixie/grammar/pypixie.gram",
+                    "./src/pixyverse/pixy/grammar/pypixie.gram",
                     "-o",
-                    os.path.join(self.bdist_dir, "pixieverse", "pixie", "parser.py"),
+                    os.path.join(self.bdist_dir, "pixyverse", "pixy", "parser.py"),
                 ]
             )
             self.announce("Generated parser.py", logging.INFO)

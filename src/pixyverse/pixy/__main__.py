@@ -1,4 +1,4 @@
-from pixieverse.pixie.cli import runtranspile
+from pixyverse.pixy.cli import runtranspile
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 [project]
-name = "pixieverse.pixie"
+name = "pixyverse.pixy"
 dynamic = ["version"]
 authors = [
   { name="Pradeep Roark", email="pradeep.roark@gmail.com" },
 ]
-description = "A package to parse pixie component files which allow you to author components in python"
+description = "A package to parse pixy component files which allow you to author components in python"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">= 3.10"
@@ -48,7 +48,7 @@ dev = [
 publish = ["twine"]
 
 [project.scripts]
-pixie = "pixieverse.pixie.cli:runtranspile"
+pixy = "pixyverse.pixy.cli:runtranspile"
 
 
 [build-system]
@@ -56,19 +56,19 @@ requires = ["setuptools>=64", "setuptools_scm>=8", "pegen >= 0.3.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-version_file = "src/pixieverse/pixie/_version.py"
+version_file = "src/pixyverse/pixy/_version.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["pixieverse*", "grammar*"]
+include = ["pixyverse*", "grammar*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.gram"]
 
 [tool.black]
-line-length = 88
-target-version = ['py39','py310','py311','py312']
+line-length = 127
+target-version = ['py310','py311','py312']
 
 [tool.mypy]
 exclude = ['.venv', 'build', 'dist']
@@ -78,5 +78,5 @@ check_untyped_defs = true
 
 
 [[tool.mypy.overrides]]
-module = "pixieverse.pixie.parser"
+module = "pixyverse.pixy.parser"
 ignore_errors = true

@@ -1,6 +1,6 @@
 import unittest
 import sys
-from pixieverse.pixie.transpile import transpile_source
+from pixyverse.pixy.transpile import transpile_source
 
 
 class TestTranspileSource(unittest.TestCase):
@@ -128,9 +128,7 @@ print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
 
-    @unittest.skipIf(
-        sys.version_info >= (3, 12), "TODO: differing outputs in 3.12 string quote"
-    )
+    @unittest.skipIf(sys.version_info >= (3, 12), "TODO: differing outputs in 3.12 string quote")
     def test_transpileAttributeExpressionsWithFormattedString(self) -> None:
         input = """
 from runtime import create_element

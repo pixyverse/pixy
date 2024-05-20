@@ -2,17 +2,17 @@ import os
 from types import ModuleType
 import unittest
 
-from pixieverse.pixie.genparser import generatePixieParserModule
+from pixyverse.pixy.genparser import generatePixieParserModule
 
 
-class TestPixieGrammar(unittest.TestCase):
+class TestPixyGrammar(unittest.TestCase):
     parserModule: ModuleType
 
     @classmethod
     def setUpClass(cls) -> None:
         module = generatePixieParserModule()
         assert module is not None
-        TestPixieGrammar.parserModule = module
+        TestPixyGrammar.parserModule = module
 
     def test_simplePyIsValidPixie(self) -> None:
         testcases = [
@@ -167,9 +167,7 @@ c=<Hello>
             TESTDATA_FILENAME = os.path.join(os.path.dirname(__file__), testcase[1])
             with self.subTest(msg=testcase[0]):
                 if testcase[0] == "broken_selfclose_1":
-                    self.skipTest(
-                        "pegen parser throws error in invalid line number and fails"
-                    )
+                    self.skipTest("pegen parser throws error in invalid line number and fails")
                 try:
                     TestPixieGrammar.parserModule.parse_file(TESTDATA_FILENAME)
                 except SyntaxError as err:

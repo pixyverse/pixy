@@ -1,10 +1,10 @@
 import argparse
-from pixieverse.pixie.transpile import transpile_source
+from pixyverse.pixy.transpile import transpile_source
 
 
 cli_parser = argparse.ArgumentParser(
-    prog="pixie",
-    description="Parse and transpile pixie files to py files",
+    prog="pixy",
+    description="Parse and transpile pixy files to py files",
 )
 cli_parser.add_argument(
     "-p",
@@ -13,9 +13,7 @@ cli_parser.add_argument(
     type=argparse.FileType("r"),
     help=".pix filename to parse and transpile to .py file",
 )
-cli_parser.add_argument(
-    "-o", "--outputfile", type=argparse.FileType("w"), help="output .py filename"
-)
+cli_parser.add_argument("-o", "--outputfile", type=argparse.FileType("w"), help="output .py filename")
 
 
 def runtranspile() -> None:

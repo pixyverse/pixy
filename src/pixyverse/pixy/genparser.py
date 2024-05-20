@@ -61,9 +61,7 @@ def load_module(source: str, module_name: str | None = None) -> ModuleType | Non
 def generatePixieParserModule() -> ModuleType:
 
     module = None
-    grammar_file_context = as_file(
-        files("pixieverse.pixie.grammar").joinpath("pypixie.gram")
-    )
+    grammar_file_context = as_file(files("pixyverse.pixy.grammar").joinpath("pypixie.gram"))
     with grammar_file_context as grammar_file:
         parsy = generatePixieParser(str(grammar_file))
         parsy.seek(0)

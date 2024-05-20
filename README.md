@@ -1,12 +1,12 @@
-Pixie
+Pixy
 ------
 
-[![Build](https://github.com/versionprime/pixie/actions/workflows/ci.yml/badge.svg)](https://github.com/versionprime/pixie/actions/workflows/ci.yml)
+[![Build](https://github.com/versionprime/pixy/actions/workflows/ci.yml/badge.svg)](https://github.com/versionprime/pixy/actions/workflows/ci.yml)
 
-What is Pixie
+What is Pixy
 ---------------
 
-pixie is a transpiler that transpiles pixie files into regular python code. Pixie files are JSX inspired component description formats that brings markup style declarative language natively embedded in python. Check out it's [DESIGN](DESIGN.md)
+pixy is a transpiler that transpiles pixy files into regular python code. Pixy files are JSX inspired component description formats that brings markup style declarative language natively embedded in python. Check out it's [DESIGN](DESIGN.md)
 
 Example
 --------
@@ -25,8 +25,8 @@ todo_page = (
 Development
 -------------
 
-1. ```git checkout github.com/versionprime/pixie.git```
-2.  ```cd pixie```
+1. ```git checkout github.com/versionprime/pixy.git```
+2.  ```cd pixy```
 3.  create a virtualenv environment and activate it.
 
     ```shell
@@ -43,7 +43,7 @@ Development
     # Run Tests
     cd src && python -m unittest
     ```
-6. Example Pixie file
+6. Example Pixy file
     ```python
     # a.pix
     comp=<div>"Hello World"</div>
@@ -51,8 +51,8 @@ Development
     ```
     Transpile
     ```shell
-    # Transpile a sample pixie file
-    python -m pixieverse.pixie -p test.pix -o test.py
+    # Transpile a sample pixy file
+    python -m pixyverse.pixy -p test.pix -o test.py
     ```
 
 Known Limitations

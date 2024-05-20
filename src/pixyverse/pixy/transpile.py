@@ -2,9 +2,9 @@ import ast
 import typing
 
 """This is a reference to a generated parser. Generate it using
-python -m pegen ./src/pixieverse/pixie/grammar/pypixie.gram -o src/pixieverse/pixie/parser.py
+python -m pegen ./src/pixyverse/pixy/grammar/pypixie.gram -o src/pixyverse/pixy/parser.py
 """
-from pixieverse.pixie.parser import parse_string
+from pixyverse.pixy.parser import parse_string
 
 
 def transpile_source_tomodule(source: str) -> ast.AST | None:
