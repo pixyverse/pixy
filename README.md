@@ -6,7 +6,7 @@ Pixy
 What is Pixy
 ---------------
 
-pixy is a transpiler that transpiles pixy files into regular python code. Pixy files are JSX inspired component description formats that brings markup style declarative language natively embedded in python. Check out it's [DESIGN](DESIGN.md)
+pixy is a transpiler that transpiles pixy files into regular python code. Pixy files are JSX inspired component description formats that brings markup style declarative language natively embedded in python. Check out it's [DESIGN](https://github.com/pixyverse/pixy/blob/develop/DESIGN.md).
 
 Example
 --------
@@ -21,6 +21,8 @@ todo_page = (
     </div>
     )
 ```
+
+In order to actually transform that to a UI representation like HTML you need the sister 👩 package, [render_html](https://github.com/pixyverse/render_html). A full example implementing a todo-list can be found in [todo_pixy](https://github.com/pixyverse/todo_pixy)
 
 Development
 -------------
