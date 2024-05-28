@@ -25,23 +25,24 @@ todo_page = (
 Development
 -------------
 
-1. ```git checkout github.com/versionprime/pixy.git```
+1. ```git checkout github.com/pixyverse/pixy.git```
 2.  ```cd pixy```
-3.  create a virtualenv environment and activate it.
+3.  create/install deps in a virtualenv environment and activate it.
 
     ```shell
-    python3 -m venv .venv
+    make venv
     source .venv/bin/activate
     ```
-4.  Install dependencies
+4. lint and typecheck
     ```shell
-    pip install ".[dev]"
+    make lint
+    make pie
     ```
 
 5.  Run Tests
     ```shell
     # Run Tests
-    cd src && python -m unittest
+    make test
     ```
 6. Example Pixy file
     ```python
