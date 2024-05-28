@@ -70,6 +70,7 @@ a += 1
         testcases = [
             ("attribute_val", "<Victory claps={10}/>"),
             ("plain_string", "<p title='Hover Here'></p>"),
+            ("attribute_underscore", "<div class_='highlight'></div>"),
             ("void_attribute", "<Button disabled/>"),
             (
                 "block_attribute",
