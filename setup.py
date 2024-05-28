@@ -38,4 +38,4 @@ class CustomBuild(build):
     sub_commands = [("build_custom", None)] + build.sub_commands
 
 
-setup(cmdclass={"build": CustomBuild, "build_custom": CustomCommand})
+setup(cmdclass={"build": CustomBuild, "build_custom": CustomCommand}, package_data={"pixy": ["py.typed"]})
