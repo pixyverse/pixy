@@ -10,3 +10,4 @@ _version.py
 .vscode
 .trash
 .TODOS
+*.stamp
