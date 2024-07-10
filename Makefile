@@ -43,7 +43,7 @@ pie: $(genparser) $(STAMP)
 	. $(VENV)/bin/activate; MYPYPATH=src mypy --namespace-packages --explicit-package-bases .
 
 test: $(genparser) $(STAMP)
-	. $(VENV)/bin/activate; cd src; python -m unittest
+	. $(VENV)/bin/activate; python -m unittest
 
 clean:
 	rm $(STAMP)
