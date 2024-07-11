@@ -680,7 +680,6 @@ pixiecomponent: selfclosingcomponent | blockcomponent
 selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
     func=ast.Name(id=getCallableFunctionForPixie(name.string), ctx=Load, LOCATIONS),
     args=[
-            ast.Constant(value=name.string, LOCATIONS),
             ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
         ],
     keywords=[],
@@ -689,7 +688,6 @@ selfclosingcomponent: '<'name=NAME attrs=(pixieattrs)*'/''>' {  ast.Call(
 blockcomponent: '<'open=NAME attrs=(pixieattrs)*'>'NEWLINE* body=blockbody* NEWLINE*'<''/'close=NAME'>' {ast.Call(
     func=ast.Name(id=getCallableFunctionForPixie(open.string), ctx=Load, LOCATIONS),
     args=[
-            ast.Constant(value=open.string, LOCATIONS),
             ast.Dict(keys=[ast.Constant(k) for (k,_) in attrs], values=[ast.Constant(v) if is_primitive(v) else v for (_,v) in attrs], ctx=Load, LOCATIONS),
             ast.List(elts=body if body else [], ctx=Load, LOCATIONS)
         ],

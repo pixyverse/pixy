@@ -196,7 +196,7 @@ print(w)"""
         input = """
 
 from runtime import create_element
-def greet_me(tagName, props, children):
+def greet_me(props):
         return <p>"Morning"</p>
 
 w = <Hello>
@@ -207,9 +207,9 @@ print(w)
 """
         expected = """from runtime import create_element
 
-def greet_me(tagName, props, children):
+def greet_me(props):
     return create_element('p', {}, ['Morning'])
-w = create_element('Hello', {}, [greet_me('greet_me', {}), 'World', 'Gone By'])
+w = create_element('Hello', {}, [greet_me({}), 'World', 'Gone By'])
 print(w)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
