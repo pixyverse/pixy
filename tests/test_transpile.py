@@ -27,11 +27,11 @@ print(a)"""
     def test_transpileSelfClosingComponent(self) -> None:
         input = """
 from runtime import create_element
-a = <Hello/>
+a = <hr/>
 print(a)
 """
         expected = """from runtime import create_element
-a = create_element('Hello', {})
+a = create_element('hr', {})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -39,11 +39,11 @@ print(a)"""
     def test_transpileSelfWithAttributes(self) -> None:
         input = """
 from runtime import create_element
-a = <Hello who={'Bertie Wooster'} salutation={'Sir'}/>
+a = <hello_world who={'Bertie Wooster'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import create_element
-a = create_element('Hello', {'who': 'Bertie Wooster', 'salutation': 'Sir'})
+a = hello_world({'who': 'Bertie Wooster', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -55,11 +55,11 @@ print(a)"""
         """
         input = """
 from runtime import create_element
-a = <Hello who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
+a = <hello_world who={'Bertie Wooster'} salutation={'Mr'} salutation={'Sir'}/>
 print(a)
 """
         expected = """from runtime import create_element
-a = create_element('Hello', {'who': 'Bertie Wooster', 'salutation': 'Mr', 'salutation': 'Sir'})
+a = hello_world({'who': 'Bertie Wooster', 'salutation': 'Mr', 'salutation': 'Sir'})
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -67,11 +67,11 @@ print(a)"""
     def test_transpileNestedBlockElements(self) -> None:
         input = """
 from runtime import create_element
-a = <Terminal><StatusBar></StatusBar></Terminal>
+a = <div><p></p></div>
 print(a)
 """
         expected = """from runtime import create_element
-a = create_element('Terminal', {}, [create_element('StatusBar', {}, [])])
+a = create_element('div', {}, [create_element('p', {}, [])])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
@@ -79,11 +79,11 @@ print(a)"""
     def test_transpileNestedBlockElementsWithAttributes(self) -> None:
         input = """
 from runtime import create_element
-a = <Terminal width={100}><StatusBar status={'IDLE'}></StatusBar></Terminal>
+a = <terminal_window width={100}><status_bar status={'IDLE'}></status_bar></terminal_window>
 print(a)
 """
         expected = """from runtime import create_element
-a = create_element('Terminal', {'width': 100}, [create_element('StatusBar', {'status': 'IDLE'}, [])])
+a = terminal_window({'width': 100}, [status_bar({'status': 'IDLE'}, [])])
 print(a)"""
         transpiled = transpile_source(input)
         self.assertEqual(expected, transpiled)
